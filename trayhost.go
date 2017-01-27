@@ -22,6 +22,7 @@ import (
 import "C"
 
 var menuItems []MenuItem
+var clickFunc func()
 
 // MenuItem is a menu item.
 type MenuItem struct {
@@ -54,6 +55,11 @@ func Initialize(title string, imageData []byte, items []MenuItem) {
 	for id, item := range menuItems {
 		addItem(id, item)
 	}
+}
+
+// Callback to invoke when icon is clicked (windows only)
+func SetClickFunc(c func()) {
+	clickFunc = c
 }
 
 // EnterLoop enters main loop.
