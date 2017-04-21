@@ -7,6 +7,7 @@
 #define MAX_LOADSTRING 100
 
 HINSTANCE hInst;
+HWND hWnd;
 HMENU hSubMenu;
 TCHAR szTitle[MAX_LOADSTRING];
 TCHAR szWindowClass[MAX_LOADSTRING];
@@ -17,7 +18,13 @@ ATOM                MyRegisterClass(HINSTANCE hInstance);
 HWND                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 
+int prevent_shutdown;
 extern void tray_callback(int itemId);
+
+void set_prevent_shutdown(int val)
+{
+    prevent_shutdown = val;
+}
 
 void add_separator_item()
 {
@@ -55,7 +62,6 @@ void native_loop()
 }
 
 int init(const char * title, struct image img) {
-    HWND hWnd;
     HINSTANCE hInstance = GetModuleHandle(NULL);
 
     // get thish shit into windows whide chars or whatever
@@ -187,10 +193,20 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
     {
+        case WM_QUERYENDSESSION:
+            if (prevent_shutdown)
+                return FALSE;
+            else
+                return DefWindowProc(hWnd, message, wParam, lParam);
+            break;
         case WM_COMMAND:
             tray_callback(LOWORD(wParam));
             break;
+        case WM_CREATE:
+            ShutdownBlockReasonCreate(hWnd, L"The DVR is busy.");
+            break;
         case WM_DESTROY:
+            ShutdownBlockReasonDestroy(hWnd);
             exit_loop();
             break;
         case WM_MYMESSAGE:

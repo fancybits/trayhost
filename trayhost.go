@@ -57,9 +57,17 @@ func Initialize(title string, imageData []byte, items []MenuItem) {
 	}
 }
 
-// Callback to invoke when icon is clicked (windows only)
+// SetClickFunc sets the callback to invoke when icon is clicked (windows only)
 func SetClickFunc(c func()) {
 	clickFunc = c
+}
+
+func SetPreventShutdown(v bool) {
+	var val = C.int(0)
+	if v {
+		val = C.int(1)
+	}
+	C.set_prevent_shutdown(val)
 }
 
 // EnterLoop enters main loop.
