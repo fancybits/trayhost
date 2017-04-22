@@ -11,7 +11,6 @@ HWND hWnd;
 HMENU hSubMenu;
 TCHAR szTitle[MAX_LOADSTRING];
 TCHAR szWindowClass[MAX_LOADSTRING];
-wchar_t *titleWide;
 NOTIFYICONDATA nid;
 
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -64,12 +63,8 @@ void native_loop()
 int init(const char * title, struct image img) {
     HINSTANCE hInstance = GetModuleHandle(NULL);
 
-    // get thish shit into windows whide chars or whatever
-    titleWide = (wchar_t*)calloc(strlen(title) + 1, sizeof(wchar_t));
-    mbstowcs(titleWide, title, strlen(title));
-
-    wcscpy((wchar_t*)szTitle, titleWide);
-    wcscpy((wchar_t*)szWindowClass, (wchar_t*)TEXT("MyClass"));
+    strcpy(szTitle, title);
+    strcpy(szWindowClass, TEXT("TrayHostClass"));
     MyRegisterClass(hInstance);
 
     hWnd = InitInstance(hInstance, FALSE); // Don't show window
@@ -167,9 +162,6 @@ HWND InitInstance(HINSTANCE hInstance, int nCmdShow)
 
     hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
                         CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, hInstance, NULL);
-    // hWnd = CreateWindowW(L"Krneki", L"Title", WS_OVERLAPPEDWINDOW,
-    //                     CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, hInstance, NULL);
-
     if (!hWnd)
     {
         return 0;
