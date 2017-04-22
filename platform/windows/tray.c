@@ -79,7 +79,7 @@ int init(const char * title, struct image img) {
     nid.hWnd = hWnd;
     nid.uID = 100;
     nid.uCallbackMessage = WM_MYMESSAGE;
-    LoadIconMetric(NULL, MAKEINTRESOURCEW(7), LIM_SMALL, &(nid.hIcon));
+    LoadIconMetric(hInstance, MAKEINTRESOURCEW(7), LIM_SMALL, &(nid.hIcon));
 
     strcpy(nid.szTip, title); // MinGW seems to use ANSI
     nid.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP;
@@ -107,12 +107,12 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.cbClsExtra     = 0;
     wcex.cbWndExtra     = 0;
     wcex.hInstance      = hInstance;
-    wcex.hIcon          = LoadIcon(NULL, MAKEINTRESOURCE(7));
+    wcex.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(7));
     wcex.hCursor        = LoadCursor(NULL, IDC_ARROW);
     wcex.hbrBackground  = (HBRUSH)(COLOR_WINDOW+1);
     wcex.lpszMenuName   = 0;
     wcex.lpszClassName  = szWindowClass;
-    wcex.hIconSm        = LoadIcon(NULL, MAKEINTRESOURCE(7));
+    wcex.hIconSm        = LoadIcon(hInstance, MAKEINTRESOURCE(7));
 
     return RegisterClassEx(&wcex);
 }
