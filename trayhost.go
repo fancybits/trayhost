@@ -14,6 +14,7 @@ import (
 #cgo linux LDFLAGS: -ldl
 
 #cgo windows CFLAGS: -DWIN32
+#cgo windows LDFLAGS: -lcomctl32
 
 #include <stdlib.h>
 #include "platform/common.h"

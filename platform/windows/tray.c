@@ -1,6 +1,8 @@
+#define NTDDI_VERSION 0x06000000
 #include <stdio.h>
 #include <windows.h>
 #include <shellapi.h>
+#include <commctrl.h>
 
 #define WM_MYMESSAGE (WM_USER + 1)
 
@@ -73,50 +75,11 @@ int init(const char * title, struct image img) {
         return -1;
     }
 
-    // Let's load up the tray icon
-    HICON hIcon;
-    {
-        // This is really hacky, but LoadImage won't let me load an image from memory.
-        // So we have to write out a temporary file, load it from there, then delete the file.
-
-        // From http://msdn.microsoft.com/en-us/library/windows/desktop/aa363875.aspx
-        TCHAR szTempFileName[MAX_PATH+1];
-        TCHAR lpTempPathBuffer[MAX_PATH+1];
-        int dwRetVal = GetTempPath(MAX_PATH+1,        // length of the buffer
-                                   lpTempPathBuffer); // buffer for path
-        if (dwRetVal > MAX_PATH+1 || (dwRetVal == 0))
-        {
-            return -1; // Failure
-        }
-
-        //  Generates a temporary file name.
-        int uRetVal = GetTempFileName(lpTempPathBuffer, // directory for tmp files
-                                      TEXT("_tmpicon"), // temp file name prefix
-                                      0,                // create unique name
-                                      szTempFileName);  // buffer for name
-        if (uRetVal == 0)
-        {
-            return -1; // Failure
-        }
-
-        // Dump the icon to the temp file
-        FILE* fIcon = fopen(szTempFileName, "wb");
-        fwrite(img.bytes, 1, img.length, fIcon);
-        fclose(fIcon);
-        fIcon = NULL;
-
-        // Load the image from the file
-        hIcon = LoadImage(NULL, szTempFileName, IMAGE_ICON, 64, 64, LR_LOADFROMFILE);
-
-        // Delete the temp file
-        remove(szTempFileName);
-    }
-
     nid.cbSize = sizeof(NOTIFYICONDATA);
     nid.hWnd = hWnd;
     nid.uID = 100;
     nid.uCallbackMessage = WM_MYMESSAGE;
-    nid.hIcon = hIcon;
+    LoadIconMetric(NULL, MAKEINTRESOURCEW(7), LIM_SMALL, &(nid.hIcon));
 
     strcpy(nid.szTip, title); // MinGW seems to use ANSI
     nid.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP;
@@ -144,12 +107,12 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.cbClsExtra     = 0;
     wcex.cbWndExtra     = 0;
     wcex.hInstance      = hInstance;
-    wcex.hIcon          = LoadIcon(NULL, IDI_APPLICATION);
+    wcex.hIcon          = LoadIcon(NULL, MAKEINTRESOURCE(7));
     wcex.hCursor        = LoadCursor(NULL, IDC_ARROW);
     wcex.hbrBackground  = (HBRUSH)(COLOR_WINDOW+1);
     wcex.lpszMenuName   = 0;
     wcex.lpszClassName  = szWindowClass;
-    wcex.hIconSm        = LoadIcon(NULL, IDI_APPLICATION);
+    wcex.hIconSm        = LoadIcon(NULL, MAKEINTRESOURCE(7));
 
     return RegisterClassEx(&wcex);
 }
