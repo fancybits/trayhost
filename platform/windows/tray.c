@@ -195,7 +195,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             tray_callback(LOWORD(wParam));
             break;
         case WM_CREATE:
-            ShutdownBlockReasonCreate(hWnd, L"The DVR is busy.");
+            ShutdownBlockReasonCreate(hWnd, L"The recording engine is busy.");
             break;
         case WM_DESTROY:
             ShutdownBlockReasonDestroy(hWnd);
