@@ -27,6 +27,10 @@ func tray_callback(itemId C.int) {
 		return
 	}
 
+	if itemId >= len(menuItems) {
+		return
+	}
+
 	item := menuItems[itemId]
 	if item.Handler != nil {
 		item.Handler()
