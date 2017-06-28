@@ -27,7 +27,7 @@ func tray_callback(itemId C.int) {
 		return
 	}
 
-	if itemId >= len(menuItems) {
+	if int(itemId) >= len(menuItems) {
 		return
 	}
 
